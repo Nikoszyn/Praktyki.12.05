@@ -1,14 +1,6 @@
 ---
-- name: Tescik
+- name: Nazwa Twojego playbooka
   hosts: all
-  gather_facts: no
   tasks:
-    - name: Uruchom komende na Mikrotiku
-      community.routeros.command:
-        commands:
-          - /system resource print
-      register: wynik
-
-    - name: Pokaz wynik w konsoli AWX
-      ansible.builtin.debug:
-        var: wynik.stdout_lines
+    - name: Pierwsze zadanie
+      ping:
