@@ -1,5 +1,6 @@
 ---
 - name: Nazwa Twojego playbooka
+  gather_facts: false
   hosts: all
   tasks:
     - name: Pierwsze zadanie
