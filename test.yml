@@ -1,0 +1,6 @@
+---
+- name: Tescik
+hosts: moj_serwer
+tasks:
+- name: test polaczenia
+    ping:
