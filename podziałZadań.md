@@ -1,10 +1,10 @@
-CZWARTEK:
-Jan:
+#CZWARTEK:
+##Jan:
   -❎podział zadań
   -❎instalacja Ansible
   -❎stworzenie testowego playbooka
   -❎przygotowanie dokumentacji instalacji oraz napotkanych problemów
-Nikodem:
+##Nikodem:
   -❎prezentacja o Ansible, AWX oraz IaC
   -❎zwolnić miejsce na dysku
   -❎instalacja WSL
