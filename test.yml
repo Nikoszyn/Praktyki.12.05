@@ -1,7 +1,13 @@
 ---
-- name: Nazwa Twojego playbooka
-  gather_facts: false
+- name: Tescik przez SSH
   hosts: all
+  gather_facts: no
   tasks:
-    - name: Pierwsze zadanie
-      ping:
+    - name: Pokaz zasoby systemowe
+      ansible.netcommon.cli_command:
+        command: /system resource print
+      register: wynik
+
+    - name: Pokaz wynik w konsoli AWX
+      ansible.builtin.debug:
+        var: wynik.stdout_lines
