@@ -1,6 +1,14 @@
 ---
 - name: Tescik
- hosts: moj_serwer
- tasks:
-- name: test polaczenia
-    ping:
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Uruchom komende na Mikrotiku
+      community.routeros.command:
+        commands:
+          - /system resource print
+      register: wynik
+
+    - name: Pokaz wynik w konsoli AWX
+      ansible.builtin.debug:
+        var: wynik.stdout_lines
