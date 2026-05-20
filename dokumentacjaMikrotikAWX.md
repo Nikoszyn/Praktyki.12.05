@@ -43,5 +43,14 @@ ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
   > w nim przechowywujemy wszystkie playbooki
   > tworzymy folder o nazwie ```collections```
   > tworzymy plik ```requirements.yml```
-  >    
+  > wklejamy do niego poniższy kod
+```
+---
+collections:
+ - name: community.routeros
+```
+> informuje on o Ansible, że do wykonania operacji potrzebna jest kolekcja ```comunity.routeros```
+
+
+> pozostałe playbooki umieszczamy w nadrzędnym folderze  
 
