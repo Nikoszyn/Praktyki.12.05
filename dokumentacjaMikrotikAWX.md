@@ -41,5 +41,7 @@ ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
 ## 5. Stworzenie repozytorium na GitHub
   > w nim przechowywujemy wszystkie playbooki
-> 
-## TRZEBA ADD DODA C
+  > tworzymy folder o nazwie ```collections```
+  > tworzymy plik ```requirements.yml```
+  >    
+
