@@ -10,7 +10,7 @@
 ## 2. Schemat działania
 ```mermaid
 graph LR
-A1[Host] -- Credential -->B(Interface)
+A1[Host] <-- Credential -->B(Interface)
 A2[Host] -- Credential -->B
 A3[Host] -- Credential -->B
 B --> C((TEMPLATE))
