@@ -4,6 +4,24 @@
   gather_facts: false
 
   vars:
+    local_file: "/runner/project/testwiedzoniczym.txt"
+    router_ip: "10.10.11.169"
+    remote_path: "/testwiedzoniczym.txt"
+    router_user: "admin"
+
+  tasks:
+    - name: Kopiowanie pliku przez SCP
+      ansible.builtin.shell: >
+        scp
+        -o StrictHostKeyChecking=no
+        -o UserKnownHostsFile=/dev/null
+        "{{ local_file }}"
+        {{ router_user }}@{{ router_ip }}:{{ remote_path }}---
+- name: Wyslij plik na MikroTik
+  hosts: all
+  gather_facts: false
+
+  vars:
     local_file: "C:/Users/Intero/Desktop/testwiedzoniczym.txt"
     router_ip: "10.10.11.169"
     remote_path: "/testwiedzoniczym.txt"
