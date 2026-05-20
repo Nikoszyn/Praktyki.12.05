@@ -15,3 +15,7 @@ B --> C((TEMPLATE))
 C2[(GITHUB)] --> P([Project])
 P --> C
 ```
+## 3. Tworzenie hosta
+> Uzupełniamy poszczególne pola
+* **Name** - adres ip serwera
+* **Desctiption** - nazwa do rozróżnienia
