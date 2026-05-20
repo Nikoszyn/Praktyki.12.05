@@ -18,4 +18,19 @@ P --> C
 ## 3. Tworzenie hosta
 > Uzupełniamy poszczególne pola
 * **Name** - adres ip serwera
-* **Desctiption** - nazwa do rozróżnienia
+* **Desctiption** - nazwa wyświetlana w interfejsie
+## 4. Tworzenie invetory
+> Uzupełniamy poszczególne pola
+* **Name** - nazwa wyświetlana w interfejsie (może być nazwa firmy)
+* **Organization** - nazwa organizacji/firmy (można default jeśli nie będzie się nikomu udostępniać AWX; służy bardziej do grupowania użytkowników)
+* **Variables** - wklejamy poniższy kod:
+```
+---
+ansible_connection: network_cli
+ansible_network_os: community.routeros.routeros
+ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+```
+> omówienie każdej linijki
+> 1. Określa sposób komunikacji Ansible z Mikrotikiem
+> 2. Wskazuje, że system na docelowym urządzeniu to MikroTik Router OS 
+> 3. Rozwiązuje problem komunikatu o weryfikacji klucza hosta SSH
