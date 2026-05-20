@@ -1,9 +1,10 @@
 # Łączenie rutera Mikrotik z AWX
 ## 1. Pojęcia
-```mermaid
-graph LR
-A[Square Rect]
-```
+    * host - pojedyńcze urządzenie
+    * interface - zbiór urządzeń (hostów)
+    * credential - dane do logowania
+    * project - łaczy playbooki z AWX
+    * template - tworzy autmatyzację łącząc interface z projectem
 ## 2. Schemat działania
 ```mermaid
 graph LR
