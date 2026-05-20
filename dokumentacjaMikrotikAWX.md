@@ -57,8 +57,10 @@ collections:
 ```
 > informuje on o Ansible, że do wykonania operacji potrzebna jest kolekcja ```comunity.routeros```
 
+> pozostałe Playbooki umieszczamy w nadrzędnym folderze
 
-> pozostałe playbooki umieszczamy w nadrzędnym folderze
+> tworzymy Playbook, który zainstaluje nam SSH
+!Tu warto zauważyć że nie mamy jeszcze przygotowanego sposobu pobierania klucza prywatnego z komputera
 ## 6. Tworzenie Project
  > Klikamy ADD
 
@@ -95,9 +97,17 @@ collections:
 * **Job Type** - wybieramy run
 * **Inventory** - wybieramy Nasze Inventory
 * **Project** - wybieramy Nasz Project
-* **Playbook** - TU BĘDZIE, ŻE WYBIERAMY SKRYPT, KTÓRY INSTALUJE SSH KEY
-* **Credentials** - wybieramy Nasze Crednetial
+* **Playbook** -
+! TU BĘDZIE, ŻE WYBIERAMY SKRYPT, KTÓRY INSTALUJE SSH KEY
+* **Credentials** - wybieramy Nasze Crednetial (logujący się przez hasło)
 > Klikamy SAVE
+## 9. Uruchomienie
+> Wybieramy nasz Template i klikamy Launch
 
+## 10. Po instalacji
+> Możemy usunąć Credential z logowaniem przez hasło
+> Podczas następnych użyć możemy zmieniać Playbooki
+
+# Gotowe
 
 
