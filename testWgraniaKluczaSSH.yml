@@ -1,41 +1,16 @@
 ---
-- name: Kopiowanie pliku na MikroTik
-  hosts: mikrotik
-  gather_facts: no
-
-  vars:
-    local_file: "./config.rsc"
-    remote_path: "/config.rsc"
-
-  tasks:
-    - name: Kopiuj plik na MikroTik
-      ansible.builtin.copy:
-        src: "{{ local_file }}"
-        dest: "{{ remote_path }}"
-      vars:
-        ansible_connection: ssh---
-- name: Kopiowanie pliku miedzy ruterami
-  hosts: router_source
+- name: Prześlij plik z pulpitu na MikroTik
+  hosts: all
   gather_facts: false
-  connection: ansible.netcommon.network_cli
 
   vars:
-    # Dane rutera docelowego (możesz je też przekazać przez AWX Survey)
-    target_router_ip: "10.0.0.2"
-    target_router_user: "admin"
-    target_router_pass: "MojeBezpieczneHaslo123"
-    source_file_path: "flash:/config.text"
-    target_file_path: "flash:/config-backup.text"
+    local_file: "C:\Users\Intero\Desktop\testwiedzyoniczym.txt"
+    router_ip: "10.10.11.178"
+    remote_path: "/testwiedzyoniczym.txt"
 
   tasks:
-    - name: Uruchomienie kopiowania przez SCP z rutera zrodlowego na docelowy
-      cisco.ios.ios_command:
-        commands:
-          - command: "copy {{ source_file_path }} scp://{{ target_router_user }}:{{ target_router_pass }}@{{ target_router_ip }}/{{ target_file_path }}"
-            prompt: "Destination filename"
-            answer: "\r"
-      register: copy_result
-
-    - name: Pokaz wynik operacji
-      ansible.builtin.debug:
-        var: copy_result.stdout_lines
+    - name: Kopiowanie pliku na router
+      ansible.builtin.shell: |
+        scp "{{ local_file }}" user@{{ router_ip }}:{{ remote_path }}
+      args:
+        executable: /bin/bash
