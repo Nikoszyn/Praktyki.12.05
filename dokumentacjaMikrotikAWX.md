@@ -62,4 +62,26 @@ collections:
 
 > Uzupełniamy poszczególne pola
 * **Name** - nazwa wyświetlana w aplikacji (może to być opis procesu jaki ma wykonać) 
+* **Organization** - nazwa organizacji/firmy (można default
+* **Source Control Type** - wybieramy GIT
+* **Source Control URL** - wklejamy link do repozytorium (np. https://github.com/uzytkownik/repozytorium.git
+> Warto w zakładce Project, wybrać go i kliknąć SYNC (aby synchronizować z GIT)
+
+## 7. Tworzenie Credentials
+> Stworzymy od razu 2 wersje logowania (przez hasło oraz przez Klucz SSH)
+### Przez Hasło
+> Uzupełniamy poszczególne pola
+* **Name** - nazwa wyświetlana w aplikacji (może to być nazwa firmy)
+* **Credential Type** - wybrać ```Machine```
+* **Nazwa Użytkownika** - nazwa użytkownika w ruterze (przeważnie admin)
+* **Hasło** - hasło użytkownika
+
+### Przez Klucz
+> Uzupełniamy poszczególne pola
+* **Name** - nazwa wyświetlana w aplikacji (może to być nazwa firmy)
+* **Credential Type** - wybrać ```Machine```
+* **Nazwa Użytkownika** - nazwa użytkownika w ruterze (przeważnie admin)
+* **Signed SSH Certificate** - przeciągnąć albo wkleić prywatny klucz SSH
+
+
 
