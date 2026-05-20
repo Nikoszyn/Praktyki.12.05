@@ -5,7 +5,7 @@
   tasks:
     - name: Pokaz zasoby systemowe
       ansible.netcommon.cli_command:
-        command: /system resource print
+        command: /system resource get version
       register: wynik
 
     - name: Pokaz wynik w konsoli AWX
