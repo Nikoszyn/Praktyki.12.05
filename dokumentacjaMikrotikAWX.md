@@ -11,9 +11,9 @@
 ```mermaid
 graph LR
 A1[Host] <-- Credential -->B(Interface)
-A2[Host] -- Credential -->B
-A3[Host] -- Credential -->B
-B --> C((TEMPLATE))
+A2[Host] <-- Credential -->B
+A3[Host] <-- Credential -->B
+B <--> C((TEMPLATE))
 C2[(GITHUB)] --> P([Project])
 P --> C
 ```
