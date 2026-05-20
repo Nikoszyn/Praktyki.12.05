@@ -25,6 +25,7 @@ P --> C
 * **Name** - adres ip serwera
 * **Desctiption** - nazwa wyświetlana w interfejsie
 
+> Klikamy SAVE
 ## 4. Tworzenie invetory
 > Klikamy ADD
 
@@ -43,6 +44,7 @@ ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 > 2. Wskazuje, że system na docelowym urządzeniu to MikroTik Router OS 
 > 3. Rozwiązuje problem komunikatu o weryfikacji klucza hosta SSH
 
+> Klikamy SAVE
 ## 5. Stworzenie repozytorium na GitHub
   > w nim przechowywujemy wszystkie playbooki
   > tworzymy folder o nazwie ```collections```
@@ -67,8 +69,11 @@ collections:
 * **Source Control URL** - wklejamy link do repozytorium (np. https://github.com/uzytkownik/repozytorium.git
 > Warto w zakładce Project, wybrać go i kliknąć SYNC (aby synchronizować z GIT)
 
+> Klikamy SAVE
 ## 7. Tworzenie Credentials
-> Stworzymy od razu 2 wersje logowania (przez hasło oraz przez Klucz SSH)
+> Stworzymy od razu 2 różne wersje logowania (przez hasło oraz przez Klucz SSH)
+> 
+> Klikamy ADD
 ### Przez Hasło
 > Uzupełniamy poszczególne pola
 * **Name** - nazwa wyświetlana w aplikacji (może to być nazwa firmy)
@@ -76,12 +81,23 @@ collections:
 * **Nazwa Użytkownika** - nazwa użytkownika w ruterze (przeważnie admin)
 * **Hasło** - hasło użytkownika
 
+
 ### Przez Klucz
 > Uzupełniamy poszczególne pola
 * **Name** - nazwa wyświetlana w aplikacji (może to być nazwa firmy)
 * **Credential Type** - wybrać ```Machine```
 * **Nazwa Użytkownika** - nazwa użytkownika w ruterze (przeważnie admin)
 * **Signed SSH Certificate** - przeciągnąć albo wkleić prywatny klucz SSH
+
+## 8. Połącznie wszystkiego w Template
+> Klikamy ADD i uzupełniamy poszczególne pola
+* **Name** - nazwa opisująca Zdarzenie (np. nazwa firmy + opis procesu)
+* **Job Type** - wybieramy run
+* **Inventory** - wybieramy Nasze Inventory
+* **Project** - wybieramy Nasz Project
+* **Playbook** - TU BĘDZIE, ŻE WYBIERAMY SKRYPT, KTÓRY INSTALUJE SSH KEY
+* **Credentials** - wybieramy Nasze Crednetial
+> Klikamy SAVE
 
 
 
