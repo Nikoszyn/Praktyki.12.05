@@ -1,4 +1,19 @@
 ---
+- name: Kopiowanie pliku na MikroTik
+  hosts: mikrotik
+  gather_facts: no
+
+  vars:
+    local_file: "./config.rsc"
+    remote_path: "/config.rsc"
+
+  tasks:
+    - name: Kopiuj plik na MikroTik
+      ansible.builtin.copy:
+        src: "{{ local_file }}"
+        dest: "{{ remote_path }}"
+      vars:
+        ansible_connection: ssh---
 - name: Kopiowanie pliku miedzy ruterami
   hosts: router_source
   gather_facts: false
