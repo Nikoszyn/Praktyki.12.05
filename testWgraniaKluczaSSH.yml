@@ -1,16 +1,15 @@
 ---
-- name: Prześlij plik z pulpitu na MikroTik
+- name: Wyslij plik na MikroTik
   hosts: all
   gather_facts: false
 
   vars:
-    local_file: "C:\Users\Intero\Desktop\testwiedzyoniczym.txt"
+    local_file: "C:/Users/Intero/Desktop/testwiedzoniczym.txt"
     router_ip: "10.10.11.169"
-    remote_path: "/testwiedzyoniczym.txt"
+    remote_path: "/testwiedzoniczym.txt"
+    router_user: "admin"
 
   tasks:
-    - name: Kopiowanie pliku na router
+    - name: Kopiowanie pliku przez SCP
       ansible.builtin.shell: |
-        scp "{{ local_file }}" user@{{ router_ip }}:{{ remote_path }}
-      args:
-        executable: /bin/bash
+        scp "{{ local_file }}" {{ router_user }}@{{ router_ip }}:{{ remote_path }}
