@@ -19,13 +19,17 @@ P --> C
 ```
 
 ## 3. Tworzenie hosta
+> Klikamy ADD
+
 > Uzupełniamy poszczególne pola
 * **Name** - adres ip serwera
 * **Desctiption** - nazwa wyświetlana w interfejsie
 
 ## 4. Tworzenie invetory
+> Klikamy ADD
+
 > Uzupełniamy poszczególne pola
-* **Name** - nazwa wyświetlana w interfejsie (może być nazwa firmy)
+* **Name** - nazwa wyświetlana w aplikacji (może to być nazwa firmy)
 * **Organization** - nazwa organizacji/firmy (można default jeśli nie będzie się nikomu udostępniać AWX; służy bardziej do grupowania użytkowników)
 * **Variables** - wklejamy poniższy kod:
 ```
@@ -52,5 +56,10 @@ collections:
 > informuje on o Ansible, że do wykonania operacji potrzebna jest kolekcja ```comunity.routeros```
 
 
-> pozostałe playbooki umieszczamy w nadrzędnym folderze  
+> pozostałe playbooki umieszczamy w nadrzędnym folderze
+## 6. Tworzenie Project
+ > Klikamy ADD
+
+> Uzupełniamy poszczególne pola
+* **Name** - nazwa wyświetlana w aplikacji (może to być opis procesu jaki ma wykonać) 
 
