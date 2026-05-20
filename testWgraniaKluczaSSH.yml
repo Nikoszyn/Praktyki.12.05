@@ -5,7 +5,7 @@
 
   vars:
     local_file: "C:\Users\Intero\Desktop\testwiedzyoniczym.txt"
-    router_ip: "10.10.11.178"
+    router_ip: "10.10.11.169"
     remote_path: "/testwiedzyoniczym.txt"
 
   tasks:
