@@ -1,1 +1,26 @@
+---
+- name: Kopiowanie pliku miedzy ruterami
+  hosts: router_source
+  gather_facts: false
+  connection: ansible.netcommon.network_cli
 
+  vars:
+    # Dane rutera docelowego (możesz je też przekazać przez AWX Survey)
+    target_router_ip: "10.0.0.2"
+    target_router_user: "admin"
+    target_router_pass: "MojeBezpieczneHaslo123"
+    source_file_path: "flash:/config.text"
+    target_file_path: "flash:/config-backup.text"
+
+  tasks:
+    - name: Uruchomienie kopiowania przez SCP z rutera zrodlowego na docelowy
+      cisco.ios.ios_command:
+        commands:
+          - command: "copy {{ source_file_path }} scp://{{ target_router_user }}:{{ target_router_pass }}@{{ target_router_ip }}/{{ target_file_path }}"
+            prompt: "Destination filename"
+            answer: "\r"
+      register: copy_result
+
+    - name: Pokaz wynik operacji
+      ansible.builtin.debug:
+        var: copy_result.stdout_lines
