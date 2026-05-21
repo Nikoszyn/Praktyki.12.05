@@ -5,14 +5,15 @@
 
   vars:
     awx_user: "user"
-    public_key_name: "id_ed25519pub.pub
+    public_key_name: "id_ed25519pub.pub"
 
   tasks:
     - name: Sprawdzenie czy plik dziala
       community.routeros.command:
-       commands:
-        - "/file print detail file={{public_key_name}}"
-       register: mikoutput
+        commands:
+          - "/file print detail where name={{ public_key_name }}"
+      register: mikoutput
+
     - name: Log
       ansible.builtin.debug:
-       var: mikoutput.stdout_lines
+        var: mikoutput.stdout_lines
