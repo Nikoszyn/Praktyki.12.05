@@ -69,6 +69,9 @@ collections:
 * **Organization** - nazwa organizacji/firmy (można default
 * **Source Control Type** - wybieramy GIT
 * **Source Control URL** - wklejamy link do repozytorium (np. https://github.com/uzytkownik/repozytorium.git)
+
+> Klikamy SAVE
+
 # AUTOMATYZACJA
 > SKRYPT DOMYŚLNIE BĘDZIE TWORZYŁ NOWEGO UŻYTKOWNIKA, NADAWAŁ MU I ADMINISTRATOROWI LOGOWANIE PRZEZ SSH
 > AKTUALNIE SKRYPT NADAJE TYLKO KLUCZ SSH DLA WYBRANEGO UŻYTKOWNIKA
@@ -109,7 +112,6 @@ collections:
           - "/file remove temp_key.txt"
 ```
 
-> Klikamy SAVE
 ## 7. Tworzenie Credentials
 > Stworzymy od razu 2 różne wersje logowania (przez hasło oraz przez Klucz SSH)
 >
