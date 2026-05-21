@@ -5,11 +5,21 @@
 
   vars:
     new_user_name: nowy_administrator2
+
   tasks:
     - name: Utwórz plik z kluczem SSH na urządzeniu
       community.routeros.command:
         commands:
-          - "/file print file=temp_key.txt; /file set temp_key.txt contents=\"{{ public_key_text }}\""
+          - "/file print file=temp_key.txt"
+
+    - name: Odczekaj chwilę na zapisanie pliku na dysku
+      ansible.builtin.pause:
+        seconds: 2
+
+    - name: Wpisz klucz SSH do pliku
+      community.routeros.command:
+        commands:
+          - "/file set temp_key.txt contents=\"{{ public_key_text }}\""
 
     - name: Import klucza SSH z utworzonego pliku
       community.routeros.command:
@@ -19,4 +29,4 @@
     - name: Usuń plik tymczasowy
       community.routeros.command:
         commands:
-          - "/file remove temp_key.txt
+          - "/file remove temp_key.txt"
