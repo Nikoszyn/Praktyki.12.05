@@ -13,10 +13,22 @@
         group: "{{ user_group }}"
         state: present
 
-    - name: Utwórz plik z kluczem SSH na urządzeniu
+    # 1. Inicjalizacja pliku
+    - name: Zainicjalizuj plik na MikroTiku
       community.routeros.command:
         commands:
-          - "/file print file=temp_key.txt; /file set temp_key.txt contents=\"{{ public_key_text }}\""
+          - "/file print file=temp_key.txt"
+
+    # 2. Czekamy 1 sekundę, aby RouterOS zdążył zapisać plik na dysku
+    - name: Odczekaj chwilę na utworzenie pliku
+      ansible.builtin.pause:
+        seconds: 1
+
+    # 3. Wrzucenie zawartości klucza
+    - name: Wpisz klucz SSH do pliku
+      community.routeros.command:
+        commands:
+          - "/file set temp_key.txt contents=\"{{ public_key_text }}\""
 
     - name: Import klucza SSH z utworzonego pliku
       community.routeros.command:
