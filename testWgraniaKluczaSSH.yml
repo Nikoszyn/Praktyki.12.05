@@ -1,19 +1,30 @@
 ---
-- name: Przesyl danych z credential do Mikrotika
+- name: Tworzenie uzytkownika i import klucza SSH na MikroTik
   hosts: all
   gather_facts: false
 
   vars:
-    awx_user: "user"
+    new_user_name: "nowy_administrator"
     public_key_name: "id_ed25519pub.pub"
 
   tasks:
-    - name: Sprawdzenie czy plik dziala
+    - name: Utworzenie nowego uzytkownika (jesli nie istnieje)
       community.routeros.command:
         commands:
-          - "/file print detail where name={{ public_key_name }}"
-      register: mikoutput
+          - "/user add name={{ new_user_name }} group=full disabled=no"
+      register: create_user_output
+      ignore_errors: true
 
-    - name: Log
+    - name: Logowanie statusu tworzenia uzytkownika
       ansible.builtin.debug:
-        var: mikoutput.stdout_lines
+        var: create_user_output.stdout_lines
+
+    - name: Import klucza SSH dla nowego uzytkownika
+      community.routeros.command:
+        commands:
+          - "/user ssh-keys import public-key-file={{ public_key_name }} user={{ new_user_name }}"
+      register: import_output
+
+    - name: Logowanie statusu importu klucza
+      ansible.builtin.debug:
+        var: import_output.stdout_lines
