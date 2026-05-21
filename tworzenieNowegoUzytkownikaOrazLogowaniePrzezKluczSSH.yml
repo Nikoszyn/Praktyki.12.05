@@ -5,7 +5,8 @@
 
   vars:
     new_user_name: "nowy_administrator"
-    public_key_text: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC3..."
+    # Ansible sam bezpiecznie wczyta klucz z pliku obok, co zapobiega błędom YAML
+    public_key_text: "{{ lookup('file', 'id_rsa.pub') }}"
 
   tasks:
     - name: 1. Upewnij się, że użytkownik istnieje (grupa full)
@@ -49,56 +50,4 @@
         commands:
           - '/file remove temp_key.txt'
       vars:
-        ansible_command_timeout: 60---
-- name: Tworzenie uzytkownika i import klucza SSH na MikroTik
-  hosts: all
-  gather_facts: false
-
-  vars:
-    # --- TUTAJ WPISZ SWOJE DANE ---
-    new_user_name: "nowy_administrator"
-    public_key_text: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC3..." # Wklej tutaj swój pełny klucz publiczny SSH
-
-  tasks:
-    - name: 1. Upewnij się, że użytkownik istnieje (grupa full)
-      community.routeros.command:
-        commands:
-          - '/user add name="{{ new_user_name }}" group=full comment="Utworzony przez Ansible" disabled=no'
-      register: user_creation
-      vars:
-        # Podniesienie timeoutu dla wolniejszych połączeń/paramiko
         ansible_command_timeout: 60
-      failed_when:
-        - user_creation.failed
-        # Ignoruj błąd tylko wtedy, gdy MikroTik odpowie, że użytkownik już istnieje.
-        # Warunek zabezpieczony przed brakiem 'stdout' w przypadku nagłego rozłączenia.
-        - user_creation.stdout is not defined or ("already has user" not in user_creation.stdout[0])
-
-    - name: 2. Utwórz czysty plik tekstowy na urządzeniu
-      community.routeros.command:
-        commands:
-          # Szukanie nieistniejącego pliku gwarantuje utworzenie całkowicie pustego pliku temp_key.txt
-          - '/file print file=temp_key.txt where name="brak_takiego_pliku_wygenerowanego_przez_ansible"'
-      vars:
-        ansible_command_timeout: 60
-
-    - name: 3. Odczekaj chwilę na zapisanie pliku na dysku MikroTika
-      ansible.builtin.pause:
-        seconds: 2
-
-    - name: 4. Wpisz klucz SSH do utworzonego pliku
-      community.routeros.command:
-        commands:
-          - '/file set temp_key.txt contents="{{ public_key_text }}"'
-      vars:
-        ansible_command_timeout: 60
-
-    - name: 5. Import klucza SSH z pliku dla wskazanego użytkownika
-      community.routeros.command:
-        commands:
-          - '/user ssh-keys import public-key-file=temp_key.txt user={{ new_user_name }}'
-      vars:
-        ansible_command_timeout: 60
-
-    - name: 6. Usuń plik tymczasowy z dysku MikroTika
-      community.routeros.
