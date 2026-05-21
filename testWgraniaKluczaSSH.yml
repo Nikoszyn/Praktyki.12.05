@@ -4,10 +4,11 @@
   gather_facts: false
 
   vars:
+    # Domyslna grupa uprawnien dla nowego uzytkownika
     user_group: "full"
 
   tasks:
-    # Zastąpiony moduł .user zwykłą komendą CLI
+    # KROK 1: Proba utworzenia uzytkownika
     - name: Stwórz nowego użytkownika w RouterOS
       community.routeros.command:
         commands:
@@ -15,28 +16,32 @@
       register: user_creation
       failed_when: 
         - user_creation.failed 
-        - "'already has user' not in user_creation.stdout[0]" 
-        # Ignorujemy błąd, jeśli użytkownik już istnieje
+        - user_creation.stdout is not defined or "'already has user' not in (user_creation.stdout | join(' '))"
 
+    # KROK 2: Inicjalizacja pustego pliku tekstowego na dysku MikroTika
     - name: Zainicjalizuj plik na MikroTiku
       community.routeros.command:
         commands:
           - "/file print file=temp_key.txt"
 
+    # KROK 3: Bezpieczna pauza na zapisanie pliku przez RouterOS
     - name: Odczekaj chwilę na utworzenie pliku
       ansible.builtin.pause:
-        seconds: 1
+        seconds: 2
 
+    # KROK 4: Wpisanie zawartosci klucza z AWX Survey do pliku
     - name: Wpisz klucz SSH do pliku
       community.routeros.command:
         commands:
           - "/file set temp_key.txt contents=\"{{ public_key_text }}\""
 
+    # KROK 5: Zaimportowanie klucza z pliku dla wybranego uzytkownika
     - name: Import klucza SSH z utworzonego pliku
       community.routeros.command:
         commands:
           - "/user ssh-keys import public-key-file=temp_key.txt user={{ new_user_name }}"
 
+    # KROK 6: Czyszczenie dysku – usuniecie pliku tymczasowego
     - name: Usuń plik tymczasowy
       community.routeros.command:
         commands:
