@@ -4,13 +4,22 @@
   gather_facts: false
 
   vars:
-    new_user_name: nowy_administrator2
 
   tasks:
-    - name: Utwórz plik z kluczem SSH na urządzeniu
+    - name: Upewnij się, że użytkownik istnieje (grupa write lub full)
       community.routeros.command:
         commands:
-          - "/file print file=temp_key.txt"
+          - '/user add name="{{ new_user_name }}" group=full comment="Utworzony przez Ansible" disabled=no'
+      register: user_creation
+      failed_when: 
+        - user_creation.failed
+        - '"already has user" not in user_creation.stdout[0]' # Ignoruj błąd, jeśli użytkownik już istnieje
+
+    - name: Utwórz czysty plik tekstowy i od razu wpisz klucz
+      community.routeros.command:
+        commands:
+          # Triat z RouterOS: print z filtrem, który nic nie znajdzie, tworzy pusty plik
+          - '/file print file=temp_key.txt where name="brak_takiego_pliku"'
 
     - name: Odczekaj chwilę na zapisanie pliku na dysku
       ansible.builtin.pause:
@@ -19,14 +28,14 @@
     - name: Wpisz klucz SSH do pliku
       community.routeros.command:
         commands:
-          - "/file set temp_key.txt contents=\"{{ public_key_text }}\""
+          - '/file set temp_key.txt contents="{{ public_key_text }}"'
 
     - name: Import klucza SSH z utworzonego pliku
       community.routeros.command:
         commands:
-          - "/user ssh-keys import public-key-file=temp_key.txt user={{ new_user_name }}"
+          - '/user ssh-keys import public-key-file=temp_key.txt user="{{ new_user_name }}"'
 
     - name: Usuń plik tymczasowy
       community.routeros.command:
         commands:
-          - "/file remove temp_key.txt"
+          - '/file remove temp_key.txt'
