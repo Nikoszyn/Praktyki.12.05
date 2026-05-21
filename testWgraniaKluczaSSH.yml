@@ -4,8 +4,15 @@
   gather_facts: false
 
   vars:
-    new_user_name: nowy_administrator
+    user_group: "full"
+
   tasks:
+    - name: Stwórz nowego użytkownika w RouterOS
+      community.routeros.user:
+        name: "{{ new_user_name }}"
+        group: "{{ user_group }}"
+        state: present
+
     - name: Utwórz plik z kluczem SSH na urządzeniu
       community.routeros.command:
         commands:
