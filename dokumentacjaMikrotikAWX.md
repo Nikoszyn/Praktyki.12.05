@@ -69,7 +69,45 @@ collections:
 * **Organization** - nazwa organizacji/firmy (można default
 * **Source Control Type** - wybieramy GIT
 * **Source Control URL** - wklejamy link do repozytorium (np. https://github.com/uzytkownik/repozytorium.git)
-> Warto w zakładce Project, wybrać go i kliknąć SYNC (aby synchronizować z GIT).
+# AUTOMATYZACJA
+> SKRYPT DOMYŚLNIE BĘDZIE TWORZYŁ NOWEGO UŻYTKOWNIKA, NADAWAŁ MU I ADMINISTRATOROWI LOGOWANIE PRZEZ SSH
+> AKTUALNIE SKRYPT NADAJE TYLKO KLUCZ SSH DLA WYBRANEGO UŻYTKOWNIKA
+
+> tworzymy playbooka 
+```
+---
+- name: Tworzenie uzytkownika i import klucza SSH na MikroTik
+  hosts: all
+  gather_facts: false
+
+  vars:
+    new_user_name: admin #TUTAJ WPISUJEMY NAZWĘ UŻYTKOWNIKA KTÓREMU CHCEMY NADAĆ KLCZ SSH
+
+  tasks:
+    - name: Utwórz plik z kluczem SSH na urządzeniu
+      community.routeros.command:
+        commands:
+          - "/file print file=temp_key.txt"
+
+    - name: Odczekaj chwilę na zapisanie pliku na dysku
+      ansible.builtin.pause:
+        seconds: 2
+
+    - name: Wpisz klucz SSH do pliku
+      community.routeros.command:
+        commands:
+          - "/file set temp_key.txt contents=\"{{ public_key_text }}\""
+
+    - name: Import klucza SSH z utworzonego pliku
+      community.routeros.command:
+        commands:
+          - "/user ssh-keys import public-key-file=temp_key.txt user={{ new_user_name }}"
+
+    - name: Usuń plik tymczasowy
+      community.routeros.command:
+        commands:
+          - "/file remove temp_key.txt"
+```
 
 > Klikamy SAVE
 ## 7. Tworzenie Credentials
