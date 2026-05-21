@@ -1,1 +1,22 @@
+---
+- name: Tworzenie uzytkownika i import klucza SSH na MikroTik
+  hosts: all
+  gather_facts: false
 
+  vars:
+    new_user_name: nowy_administrator2
+  tasks:
+    - name: Utwórz plik z kluczem SSH na urządzeniu
+      community.routeros.command:
+        commands:
+          - "/file print file=temp_key.txt; /file set temp_key.txt contents=\"{{ public_key_text }}\""
+
+    - name: Import klucza SSH z utworzonego pliku
+      community.routeros.command:
+        commands:
+          - "/user ssh-keys import public-key-file=temp_key.txt user={{ new_user_name }}"
+
+    - name: Usuń plik tymczasowy
+      community.routeros.command:
+        commands:
+          - "/file remove temp_key.txt
