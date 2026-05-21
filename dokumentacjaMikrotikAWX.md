@@ -108,11 +108,3 @@ collections:
 > Podczas następnych użyć możemy zmieniać Playbooki.
 
 # Gotowe.
-
-1. Stworzenie klucza
-2. Szyfrowanie publicznego
-3. Wysyłka na AWX (dodanie w credentials)
-4. Uruchomienie playbooka
-   - dodaje key SSH dla admin
-   - blokuje możliwość po haśle
-   - tworzy user AWX
