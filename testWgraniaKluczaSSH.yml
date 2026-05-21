@@ -1,33 +1,18 @@
 ---
-- name: Wyslij plik na MikroTik
+- name: Przesyl danych z credential do Mikrotika
   hosts: all
   gather_facts: false
 
   vars:
-    local_file: "/runner/project/testwiedzoniczym.txt"
-    router_ip: "10.10.11.169"
-    remote_path: "/testwiedzoniczym.txt"
-    router_user: "admin"
+    awx_user: "user"
+    public_key_name: "id_ed25519pub.pub
 
   tasks:
-    - name: Kopiowanie pliku przez SCP
-      ansible.builtin.shell: >
-        scp
-        -o StrictHostKeyChecking=no
-        -o UserKnownHostsFile=/dev/null
-        "{{ local_file }}"
-        {{ router_user }}@{{ router_ip }}:{{ remote_path }}---
-- name: Wyslij plik na MikroTik
-  hosts: all
-  gather_facts: false
-
-  vars:
-    local_file: "C:/Users/Intero/Desktop/testwiedzoniczym.txt"
-    router_ip: "10.10.11.169"
-    remote_path: "/testwiedzoniczym.txt"
-    router_user: "admin"
-
-  tasks:
-    - name: Kopiowanie pliku przez SCP
-      ansible.builtin.shell: |
-        scp "{{ local_file }}" {{ router_user }}@{{ router_ip }}:{{ remote_path }}
+    - name: Sprawdzenie czy plik dziala
+      community.routeros.command:
+       commands:
+        - "/file print detail file={{public_key_name}}"
+       register: mikoutput
+    - name: Log
+      ansible.builtin.debug:
+       var: mikoutput.stdout_lines
