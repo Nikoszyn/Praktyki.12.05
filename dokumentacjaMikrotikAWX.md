@@ -111,8 +111,21 @@ collections:
         commands:
           - "/file remove temp_key.txt"
 ```
+## 7. Tworznenie klucza SSH
+> Aby utworzyć klucz ssh, włączamy CMD
 
-## 7. Tworzenie Credentials
+> Przechodzimy do naszego katalogu np.```cd ./Desktop```
+>
+> Wpisujemy następujące polecenie
+```
+ssh-keygen -t ed25519 -C NAZWA_FIRMY
+```
+> Utworzy ono 2 pliki:
+* **ed25519** - jest to klucz prywatny
+* **ed25519.pub** - jest to klucz publiczny
+> Możemy zmienić nazwę pilków na związane z firmą wyrażenie
+
+## 8. Tworzenie Credentials
 > Stworzymy od razu 2 różne wersje logowania (przez hasło oraz przez Klucz SSH)
 >
 > Klikamy ADD
@@ -130,7 +143,7 @@ collections:
 * **Nazwa Użytkownika** - nazwa użytkownika w ruterze (przeważnie admin)
 * **Signed SSH Certificate** - przeciągnąć albo wkleić prywatny klucz SSH
 
-## 8. Połącznie wszystkiego w Template
+## 9. Połącznie wszystkiego w Template
 > Klikamy ADD i uzupełniamy poszczególne pola
 * **Name** - nazwa opisująca Zdarzenie (np. nazwa firmy + opis procesu)
 * **Job Type** - wybieramy run
@@ -140,10 +153,10 @@ collections:
 ! TU BĘDZIE, ŻE WYBIERAMY SKRYPT, KTÓRY INSTALUJE SSH KEY
 * **Credentials** - wybieramy Nasze Crednetial (logujący się przez hasło)
 > Klikamy SAVE
-## 9. Uruchomienie
+## 10. Uruchomienie
 > Wybieramy nasz Template i klikamy Launch.
 
-## 10. Po instalacji
+## 11. Po instalacji
 > Możemy usunąć Credential z logowaniem przez hasło
 > Podczas następnych użyć możemy zmieniać Playbooki.
 
