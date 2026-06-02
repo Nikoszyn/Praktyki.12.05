@@ -1,5 +1,5 @@
 ---
-- name: Konfiguracja uzytkownikow i kluczy SSH na MikroTik
+- name: Konfiguracja uzytkownikow i kluczy SSH na MikroTik (Metoda Importu)
   gather_facts: false
   hosts: all
   connection: network_cli
@@ -8,34 +8,44 @@
     ssh_public_key_string: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBXJgJRptFTu+uux3fdl4IlYye/6zHUYUM1gx+ekjxR7 test"
 
   tasks:
-    - name: Przygotowanie pliku klucza (czyszczenie i zapis)
+    - name: Usun stare pliki robocze, jesli istnieja
       community.routeros.command:
         commands:
           - /file remove [find name="ansible_key.pub"]
-          - /file print file=ansible_key.pub
-      failed_when: false # Ignorujemy błąd, jeśli plik do usunięcia nie istniał
+          - /file remove [find name="add_users.rsc"]
+      failed_when: false
 
-    - name: Wpisanie zawartosci do pliku klucza
+    - name: Stworz plik klucza SSH i plik skryptu konfiguracyjnego
+      community.routeros.command:
+        commands:
+          - /file print file=ansible_key.pub
+          - /file print file=add_users.rsc
+
+    - name: Wgraj zawartosc do pliku klucza
       community.routeros.command:
         commands:
           - /file set ansible_key.pub contents="{{ ssh_public_key_string }}"
 
-    - name: Bezpieczne dodanie uzytkownikow (tylko jesli nie istnieja)
+    - name: Wgraj zawartosc do skryptu rsc
       community.routeros.command:
         commands:
-          - /user { add name="user_full" group="full" comment="Konto FULL" [find name="user_full" = ""] }
-          - /user { add name="user_write" group="write" comment="Konto WRITE" [find name="user_write" = ""] }
-          - /user { add name="user_read" group="read" comment="Konto READ" [find name="user_read" = ""] }
+          - >
+            /file set add_users.rsc contents="
+            /user {:if ([:len [find name=\"user_full\"]] = 0) do={add name=\"user_full\" group=\"full\" comment=\"Konto FULL\"}};
+            /user {:if ([:len [find name=\"user_write\"]] = 0) do={add name=\"user_write\" group=\"write\" comment=\"Konto WRITE\"}};
+            /user {:if ([:len [find name=\"user_read\"]] = 0) do={add name=\"user_read\" group=\"read\" comment=\"Konto READ\"}};
+            /user ssh-keys import user=\"user_full\" public-key-file=\"ansible_key.pub\";
+            /user ssh-keys import user=\"user_write\" public-key-file=\"ansible_key.pub\";
+            /user ssh-keys import user=\"user_read\" public-key-file=\"ansible_key.pub\";"
 
-    - name: Import kluczy SSH dla uzytkownikow
+    - name: Uruchom skrypt na MikroTiku
       community.routeros.command:
         commands:
-          - /user ssh-keys import user="user_full" public-key-file="ansible_key.pub"
-          - /user ssh-keys import user="user_write" public-key-file="ansible_key.pub"
-          - /user ssh-keys import user="user_read" public-key-file="ansible_key.pub"
+          - /import file-name=add_users.rsc
 
-    - name: Sprzatanie pliku klucza
+    - name: Sprzatanie po zakonczeniu
       community.routeros.command:
         commands:
           - /file remove [find name="ansible_key.pub"]
+          - /file remove [find name="add_users.rsc"]
       failed_when: false
