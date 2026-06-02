@@ -1,6 +1,5 @@
 ---
 - name: Konfiguracja uzytkownikow i kluczy SSH na MikroTik
-  hosts: mikrotiks
   gather_facts: false
   connection: network_cli
 
