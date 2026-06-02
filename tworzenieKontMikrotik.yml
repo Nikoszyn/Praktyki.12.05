@@ -1,7 +1,7 @@
 ---
 - name: Konfiguracja uzytkownikow i kluczy SSH na MikroTik
   gather_facts: false
-  host: all
+  hosts: all
   connection: network_cli
 
   vars:
