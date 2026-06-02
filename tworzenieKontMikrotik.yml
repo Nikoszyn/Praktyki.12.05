@@ -11,7 +11,7 @@
     - name: Przygotowanie pliku klucza (czyszczenie i zapis)
       community.routeros.command:
         commands:
-          - /file remove [find name="ansible_key.pub"]
+          - /file remove [find name="ansible_key.pub.txt"]
           - /user group export file=ansible_key.pub
       failed_when: false # Ignorujemy błąd, jeśli plik do usunięcia nie istniał
 
@@ -22,7 +22,7 @@
     - name: Wpisanie zawartosci do pliku klucza
       community.routeros.command:
         commands:
-          - /file set ansible_key.pub contents="{{ ssh_public_key_string }}"
+          - /file set ansible_key.pub.txt contents="{{ ssh_public_key_string }}"
 
     - name: Bezpieczne dodanie uzytkownikow (tylko jesli nie istnieja)
       community.routeros.command:
@@ -34,12 +34,12 @@
     - name: Import kluczy SSH dla uzytkownikow
       community.routeros.command:
         commands:
-          - /user ssh-keys import user="user_full" public-key-file="ansible_key.pub"
-          - /user ssh-keys import user="user_write" public-key-file="ansible_key.pub"
-          - /user ssh-keys import user="user_read" public-key-file="ansible_key.pub"
+          - /user ssh-keys import user="user_full" public-key-file="ansible_key.pub.txt"
+          - /user ssh-keys import user="user_write" public-key-file="ansible_key.pub.txt"
+          - /user ssh-keys import user="user_read" public-key-file="ansible_key.pub.txt"
 
     - name: Sprzatanie pliku klucza
       community.routeros.command:
         commands:
-          - /file remove [find name="ansible_key.pub"]
+          - /file remove [find name="ansible_key.pub.txt"]
       failed_when: false
