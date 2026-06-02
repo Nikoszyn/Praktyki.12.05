@@ -6,7 +6,7 @@
 
   vars:
     # Wklej tutaj swój publiczny klucz SSH (cały ciąg, np. ssh-ed25519 AAA...)
-    ssh_public_key_string: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOmG..."
+    ssh_public_key_string: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBXJgJRptFTu+uux3fdl4IlYye/6zHUYUM1gx+ekjxR7 test"
 
   tasks:
     - name: Usun tymczasowy plik klucza, jesli istnieje na MikroTiku
