@@ -60,7 +60,6 @@ collections:
 > pozostałe Playbooki umieszczamy w nadrzędnym folderze.
 
 > tworzymy Playbook, który zainstaluje nam SSH
-!Tu warto zauważyć, że nie mamy jeszcze przygotowanego sposobu pobierania klucza prywatnego z komputera
 ## 6. Tworzenie Project
 > Klikamy ADD
 
@@ -75,7 +74,7 @@ collections:
 # AUTOMATYZACJA
 > Skrypt tworzy 3 użytkowników, każdy z nich ma swoje uprawnienia (full, read, write). Nie mogą się oni logować przez WinBox. Każdy z nich ma ten sam klucz publiczny.
 
-> tworzymy playbooka 
+> tworzymy playbooka o nazwie ```tworzenieKont.yml```
 ```
 ---
 - name: Konfiguracja uzytkownikow i kluczy SSH na MikroTik
@@ -155,8 +154,7 @@ ssh-keygen -t ed25519 -C NAZWA_FIRMY
 * **Job Type** - wybieramy run
 * **Inventory** - wybieramy Nasze Inventory
 * **Project** - wybieramy Nasz Project
-* **Playbook** -
-! TU BĘDZIE, ŻE WYBIERAMY SKRYPT, KTÓRY INSTALUJE SSH KEY
+* **Playbook** - Wybieramy playbook ```tworzenieKont.yml```
 * **Credentials** - wybieramy Nasze Crednetial (logujący się przez hasło)
 > Klikamy SAVE
 ## 10. Uruchomienie
