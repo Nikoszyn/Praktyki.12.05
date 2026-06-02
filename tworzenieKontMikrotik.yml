@@ -5,59 +5,37 @@
   connection: network_cli
 
   vars:
-    # Wklej tutaj swój publiczny klucz SSH (cały ciąg, np. ssh-ed25519 AAA...)
     ssh_public_key_string: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBXJgJRptFTu+uux3fdl4IlYye/6zHUYUM1gx+ekjxR7 test"
 
   tasks:
-    - name: Usun tymczasowy plik klucza, jesli istnieje na MikroTiku
+    - name: Przygotowanie pliku klucza (czyszczenie i zapis)
       community.routeros.command:
         commands:
           - /file remove [find name="ansible_key.pub"]
-      failed_when: false # Ignoruj blad, jesli plik nie istnieje
+          - /file print file=ansible_key.pub
+      failed_when: false # Ignorujemy błąd, jeśli plik do usunięcia nie istniał
 
-    - name: Stworz plik z kluczem SSH na MikroTiku
+    - name: Wpisanie zawartosci do pliku klucza
       community.routeros.command:
         commands:
-          - /file print file=ansible_key.pub
           - /file set ansible_key.pub contents="{{ ssh_public_key_string }}"
 
-    # --- TWORZENIE UŻYTKOWNIKÓW ---
-
-    - name: Stworz uzytkownika z uprawnieniami 'full' (tylko SSH)
+    - name: Bezpieczne dodanie uzytkownikow (tylko jesli nie istnieja)
       community.routeros.command:
         commands:
-          - :do { /user add name="user_full" group="full" comment="Konto FULL - tylko SSH" } on-error={}
+          - /user { add name="user_full" group="full" comment="Konto FULL" [find name="user_full" = ""] }
+          - /user { add name="user_write" group="write" comment="Konto WRITE" [find name="user_write" = ""] }
+          - /user { add name="user_read" group="read" comment="Konto READ" [find name="user_read" = ""] }
 
-    - name: Stworz uzytkownika z uprawnieniami 'write' (tylko SSH)
-      community.routeros.command:
-        commands:
-          - :do { /user add name="user_write" group="write" comment="Konto WRITE - tylko SSH" } on-error={}
-
-    - name: Stworz uzytkownika z uprawnieniami 'read' (tylko SSH)
-      community.routeros.command:
-        commands:
-          - :do { /user add name="user_read" group="read" comment="Konto READ - tylko SSH" } on-error={}
-
-    # --- IMPORT KLUCZY SSH ---
-
-    - name: Przypisz klucz SSH do uzytkownika user_full
+    - name: Import kluczy SSH dla uzytkownikow
       community.routeros.command:
         commands:
           - /user ssh-keys import user="user_full" public-key-file="ansible_key.pub"
-
-    - name: Przypisz klucz SSH do uzytkownika user_write
-      community.routeros.command:
-        commands:
           - /user ssh-keys import user="user_write" public-key-file="ansible_key.pub"
-
-    - name: Przypisz klucz SSH do uzytkownika user_read
-      community.routeros.command:
-        commands:
           - /user ssh-keys import user="user_read" public-key-file="ansible_key.pub"
 
-    # --- SPRZĄTANIE ---
-
-    - name: Usun plik klucza z pamieci MikroTika po imporcie
+    - name: Sprzatanie pliku klucza
       community.routeros.command:
         commands:
           - /file remove [find name="ansible_key.pub"]
+      failed_when: false
