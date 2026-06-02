@@ -73,43 +73,49 @@ collections:
 > Klikamy SAVE
 
 # AUTOMATYZACJA
-> SKRYPT DOMYŚLNIE BĘDZIE TWORZYŁ NOWEGO UŻYTKOWNIKA, NADAWAŁ MU I ADMINISTRATOROWI LOGOWANIE PRZEZ SSH
-> AKTUALNIE SKRYPT NADAJE TYLKO KLUCZ SSH DLA WYBRANEGO UŻYTKOWNIKA
+> Skrypt tworzy 3 użytkowników, każdy z nich ma swoje uprawnienia (full, read, write). Nie mogą się oni logować przez WinBox. Każdy z nich ma ten sam klucz publiczny.
 
 > tworzymy playbooka 
 ```
 ---
-- name: Tworzenie uzytkownika i import klucza SSH na MikroTik
-  hosts: all
+- name: Konfiguracja uzytkownikow i kluczy SSH na MikroTik
   gather_facts: false
-
-  vars:
-    new_user_name: admin #TUTAJ WPISUJEMY NAZWĘ UŻYTKOWNIKA KTÓREMU CHCEMY NADAĆ KLCZ SSH
+  hosts: all
+  connection: network_cli
 
   tasks:
-    - name: Utwórz plik z kluczem SSH na urządzeniu
+    - name: Przygotowanie pliku klucza i stworzenie 3 nowych grup
       community.routeros.command:
         commands:
-          - "/file print file=temp_key.txt"
+          - /file remove [find name="ansible_key.pub.txt"]
+          - :if ([:len [/user group find name="ssh_full"]] = 0) do={ /user group add name="ssh_full" policy="local,ssh,read,write,policy,test,password,sniff,romon,sensitive" comment="Dostep WYLACZNIE przez SSH" }
+          - :if ([:len [/user group find name="ssh_read"]] = 0) do={ /user group add name="ssh_read" policy="local,ssh,read,test" comment="Dostep WYLACZNIE przez SSH" }
+          - :if ([:len [/user group find name="ssh_write"]] = 0) do={ /user group add name="ssh_write" policy="local,ssh,read,write,test" comment="Dostep WYLACZNIE przez SSH" }
+      failed_when: false # Ignorujemy błąd, jeśli plik do usunięcia nie istniał
 
-    - name: Odczekaj chwilę na zapisanie pliku na dysku
+    - name: Odczekanie chwili na wygenerowanie pliku
       ansible.builtin.pause:
         seconds: 2
 
-    - name: Wpisz klucz SSH do pliku
+    - name: Bezpieczne dodanie uzytkownikow (tylko jesli nie istnieja)
       community.routeros.command:
         commands:
-          - "/file set temp_key.txt contents=\"{{ public_key_text }}\""
+          - :if ([:len [/user find name="user_full"]] = 0) do={ /user add name="user_full" group="ssh_full" comment="Konto FULL" password="LosoweSkomplikowaneHaslo123!" }
+          - :if ([:len [/user find name="user_write"]] = 0) do={ /user add name="user_write" group="ssh_write" comment="Konto WRITE" password="LosoweSkomplikowaneHaslo123!" }
+          - :if ([:len [/user find name="user_read"]] = 0) do={ /user add name="user_read" group="ssh_read" comment="Konto READ" password="LosoweSkomplikowaneHaslo123!" }
 
-    - name: Import klucza SSH z utworzonego pliku
+    - name: Import kluczy SSH dla uzytkownikow
       community.routeros.command:
         commands:
-          - "/user ssh-keys import public-key-file=temp_key.txt user={{ new_user_name }}"
-
-    - name: Usuń plik tymczasowy
-      community.routeros.command:
-        commands:
-          - "/file remove temp_key.txt"
+          - /file print file=ansible_key.pub
+          - /file set ansible_key.pub.txt contents="{{ ssh_public_key_string }}"
+          - /user ssh-keys import user="user_full" public-key-file="ansible_key.pub.txt"
+          - /file print file=ansible_key.pub
+          - /file set ansible_key.pub.txt contents="{{ ssh_public_key_string }}"
+          - /user ssh-keys import user="user_write" public-key-file="ansible_key.pub.txt"
+          - /file print file=ansible_key.pub
+          - /file set ansible_key.pub.txt contents="{{ ssh_public_key_string }}"
+          - /user ssh-keys import user="user_read" public-key-file="ansible_key.pub.txt"
 ```
 ## 7. Tworznenie klucza SSH
 > Aby utworzyć klucz ssh, włączamy CMD
