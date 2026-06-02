@@ -35,7 +35,11 @@
       community.routeros.command:
         commands:
           - /user ssh-keys import user="user_full" public-key-file="ansible_key.pub.txt"
+          - /file print file=ansible_key.pub
+          - /file set ansible_key.pub.txt contents="{{ ssh_public_key_string }}"
           - /user ssh-keys import user="user_write" public-key-file="ansible_key.pub.txt"
+          - /file print file=ansible_key.pub
+          - /file set ansible_key.pub.txt contents="{{ ssh_public_key_string }}"
           - /user ssh-keys import user="user_read" public-key-file="ansible_key.pub.txt"
 
     - name: Sprzatanie pliku klucza
