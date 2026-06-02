@@ -2,40 +2,32 @@
 - name: Konfiguracja uzytkownikow i kluczy SSH na MikroTik
   gather_facts: false
   hosts: all
+  # Do dedykowanych modułów używamy standardowego połączenia ansible.netcommon.network_cli
   connection: network_cli
 
   vars:
-    ssh_public_key_string: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBXJgJRptFTu+uux3fdl4IlYye/6zHUYUM1gx+ekjxR7 test"
+    # Sam klucz publiczny (bez typu i komentarza na początku/końcu)
+    ssh_key_clean: "AAAAC3NzaC1lZDI1NTE5AAAAIBXJgJRptFTu+uux3fdl4IlYye/6zHUYUM1gx+ekjxR7"
 
   tasks:
-    - name: Przygotowanie pliku klucza (czyszczenie i zapis)
-      community.routeros.command:
-        commands:
-          - /file remove [find name="ansible_key.pub"]
-          - /file print file=ansible_key.pub
-      failed_when: false # Ignorujemy błąd, jeśli plik do usunięcia nie istniał
-
-    - name: Wpisanie zawartosci do pliku klucza
-      community.routeros.command:
-        commands:
-          - /file set ansible_key.pub contents="{{ ssh_public_key_string }}"
-
     - name: Bezpieczne dodanie uzytkownikow (tylko jesli nie istnieja)
-      community.routeros.command:
-        commands:
-          - /user { add name="user_full" group="full" comment="Konto FULL" [find name="user_full" = ""] }
-          - /user { add name="user_write" group="write" comment="Konto WRITE" [find name="user_write" = ""] }
-          - /user { add name="user_read" group="read" comment="Konto READ" [find name="user_read" = ""] }
+      community.routeros.user:
+        name: "{{ item.name }}"
+        group: "{{ item.group }}"
+        comment: "{{ item.comment }}"
+        state: present
+      loop:
+        - { name: "user_full", group: "full", comment: "Konto FULL" }
+        - { name: "user_write", group: "write", comment: "Konto WRITE" }
+        - { name: "user_read", group: "read", comment: "Konto READ" }
 
-    - name: Import kluczy SSH dla uzytkownikow
-      community.routeros.command:
-        commands:
-          - /user ssh-keys import user="user_full" public-key-file="ansible_key.pub"
-          - /user ssh-keys import user="user_write" public-key-file="ansible_key.pub"
-          - /user ssh-keys import user="user_read" public-key-file="ansible_key.pub"
-
-    - name: Sprzatanie pliku klucza
-      community.routeros.command:
-        commands:
-          - /file remove [find name="ansible_key.pub"]
-      failed_when: false
+    - name: Przypisanie klucza SSH do uzytkownikow
+      community.routeros.user_ssh_key:
+        user: "{{ item }}"
+        key: "{{ ssh_key_clean }}"
+        key_type: "ed25519"
+        state: present
+      loop:
+        - "user_full"
+        - "user_write"
+        - "user_read"
