@@ -12,7 +12,7 @@
       community.routeros.command:
         commands:
           - /file remove [find name="ansible_key.pub"]
-          - /file print file=ansible_key.pub
+          - /user group export file=ansible_key.pub
       failed_when: false # Ignorujemy błąd, jeśli plik do usunięcia nie istniał
 
     - name: Odczekanie chwili na wygenerowanie pliku
