@@ -5,10 +5,13 @@
   connection: network_cli
 
   tasks:
-    - name: Przygotowanie pliku klucza (czyszczenie i zapis)
+    - name: Przygotowanie pliku klucza i stworzenie 3 nowych grup
       community.routeros.command:
         commands:
           - /file remove [find name="ansible_key.pub.txt"]
+          - :if ([:len [/user group find name="ssh_full"]] = 0) do={ /user group add name="ssh_full" policy="local,ssh,read,write,policy,test,password,sniff,romon,sensitive" comment="Dostep WYLACZNIE przez SSH" }
+          - :if ([:len [/user group find name="ssh_read"]] = 0) do={ /user group add name="ssh_read" policy="local,ssh,read,test" comment="Dostep WYLACZNIE przez SSH" }
+          - :if ([:len [/user group find name="ssh_write"]] = 0) do={ /user group add name="ssh_write" policy="local,ssh,read,write,test" comment="Dostep WYLACZNIE przez SSH" }
       failed_when: false # Ignorujemy błąd, jeśli plik do usunięcia nie istniał
 
     - name: Odczekanie chwili na wygenerowanie pliku
@@ -18,9 +21,9 @@
     - name: Bezpieczne dodanie uzytkownikow (tylko jesli nie istnieja)
       community.routeros.command:
         commands:
-          - :if ([:len [/user find name="user_full"]] = 0) do={ /user add name="user_full" group="full" comment="Konto FULL" password="LosoweSkomplikowaneHaslo123!" }
-          - :if ([:len [/user find name="user_write"]] = 0) do={ /user add name="user_write" group="write" comment="Konto WRITE" password="LosoweSkomplikowaneHaslo123!" }
-          - :if ([:len [/user find name="user_read"]] = 0) do={ /user add name="user_read" group="read" comment="Konto READ" password="LosoweSkomplikowaneHaslo123!" }
+          - :if ([:len [/user find name="user_full"]] = 0) do={ /user add name="user_full" group="ssh_full" comment="Konto FULL" password="LosoweSkomplikowaneHaslo123!" }
+          - :if ([:len [/user find name="user_write"]] = 0) do={ /user add name="user_write" group="ssh_write" comment="Konto WRITE" password="LosoweSkomplikowaneHaslo123!" }
+          - :if ([:len [/user find name="user_read"]] = 0) do={ /user add name="user_read" group="ssh_read" comment="Konto READ" password="LosoweSkomplikowaneHaslo123!" }
 
     - name: Import kluczy SSH dla uzytkownikow
       community.routeros.command:
