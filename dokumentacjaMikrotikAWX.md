@@ -164,4 +164,31 @@ ssh-keygen -t ed25519 -C NAZWA_FIRMY
 > Możemy usunąć Credential z logowaniem przez hasło
 > Podczas następnych użyć możemy zmieniać Playbooki.
 
+## *. Konfiguracja środowiska wykonywalnego
+> Tworzymy konto na docker i pobieramy docker desktop
+
+> Na pulpicie tworzymy folder o nazwie EEcustom, a w nim plik ```Dockerfile``` o zawartości
+```
+FROM quay.io/ansible/awx-ee:latest
+USER root
+RUN pip3 install ansible-pylibssh
+USER 1000
+``` 
+> następnie w cmd w tym katalogu wykounjemy poniższe polecenia
+```
+docker build -t custom-ee:v1.0 .
+```
+> Tutaj będziemy musieli się zalogować 
+```
+docker login
+```
+```
+docker tag custom-ee:v1.0 NAZWAPROFILUNADOCKER/custom-ee:v1.0
+```
+```
+docker push NAZWAPROFILUNADOCKER/custom-ee:v1.0
+```
+> W AWX przechodimy do zakładki Execution Environment, klikamy ADD
+* **Name** - nazwa EE
+* **Image** - należy wpisać ```docker.io/NAZWAPROFILUNADOCKER/custom-ee:v1.0```
 # Gotowe.
